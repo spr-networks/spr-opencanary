@@ -28,6 +28,7 @@ import {
   TextareaInput,
   VStack
 } from '@spr-networks/plugin-ui'
+import LanPresence from './LanPresencePanel'
 
 const PLUGIN_BASE = `/plugins/${api.pluginURI() || 'spr-opencanary'}`
 
@@ -510,6 +511,7 @@ export default function Plugin() {
         {[
           ['overview', 'Overview'],
           ['services', 'Decoy services'],
+          ['presence', 'LAN presence'],
           ['settings', 'Settings']
         ].map(([value, label]) => (
           <Button
@@ -673,6 +675,14 @@ export default function Plugin() {
             </HStack>
           </Card>
         </>
+      ) : null}
+
+      {tab === 'presence' ? (
+        <LanPresence
+          canaryIP={status?.CanaryIP || '172.30.119.2'}
+          services={config?.Services || {}}
+          serviceDefinitions={SERVICES}
+        />
       ) : null}
 
       {tab === 'settings' ? (

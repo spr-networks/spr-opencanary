@@ -14,6 +14,7 @@ into an appliance-style dashboard built with [`spr-plugin-ui`](https://github.co
 - NAS appliance, Linux server, Windows server, and network appliance presets
 - Generic, Slack, and Microsoft Teams webhooks; the secret URL is never returned by the API
 - Ignore-list support for trusted IP addresses and CIDRs
+- Optional PFW-managed LAN destination and port mapping
 - OpenCanary process controls and SPR topology integration
 - Responsive light/dark UI that inherits SPR's theme through `spr-plugin-ui`
 
@@ -27,6 +28,24 @@ can be observed. Choose ports that do not collide with the router or other LAN s
 2. Enter `https://github.com/spr-networks/spr-opencanary`.
 3. Open **spr-opencanary** from the navigation after installation.
 4. Select a service preset, configure notifications if desired, and save.
+
+## Present the canary on the LAN
+
+Open **LAN presence** in the plugin to publish an OpenCanary listener at a destination and port
+chosen for LAN clients. This optional feature requires the SPR Programmable Firewall (PFW)
+extension.
+
+The initial mapping uses `192.168.0.0/16` as PFW's `Client.SrcIP`, presents a user-selected
+destination such as `192.168.2.253` on TCP port `8080`, and translates it to OpenCanary at
+`172.30.119.2:80`. Additional TCP or UDP mappings can publish more enabled listeners at the same
+destination—for example, `2222 → 22` for SSH. The plugin creates one managed PFW flow per row. In
+PFW terms, the selected address and presented port are `OriginalDst` and `OriginalDstPort`; the
+container address and enabled listener are `Dst` and `DstPort`. The source CIDR, presented
+destination, protocols, and ports are editable.
+
+The flows apply to LAN client traffic and do not publish the canary on the WAN. Choose a
+destination and presented ports that are not already used by real LAN services. Removing LAN
+presence deletes only the flows managed by this plugin.
 
 For a command-line install:
 
@@ -43,6 +62,11 @@ The plugin uses a dedicated Docker bridge named `spr-opencanary` with a static a
 address. No ports are published to the host. SPR grants `lan`, `wan`, and `dns` policies to
 the bridge: LAN reachability makes the honeypot useful, while WAN/DNS let configured webhook
 destinations receive alerts.
+
+When LAN presence is enabled, PFW performs destination and port translation from the configured
+client-facing address to the container bridge address. OpenCanary continues to run only in its
+isolated Docker network; the plugin does not use host networking, add container privileges, or
+publish Docker ports.
 
 A small Go control plane validates the friendly configuration, writes the upstream
 OpenCanary JSON, supervises the Python daemon, parses its bounded rotating event log, serves the
