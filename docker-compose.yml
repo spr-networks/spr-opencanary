@@ -1,0 +1,47 @@
+x-labels:
+  &default-labels
+  org.supernetworks.ci: "true"
+  org.supernetworks.version: ${RELEASE_VERSION:-latest}${RELEASE_CHANNEL:-}
+
+services:
+  spr-opencanary:
+    container_name: spr-opencanary
+    image: ghcr.io/spr-networks/spr-opencanary:${RELEASE_VERSION:-latest}${RELEASE_CHANNEL:-}
+    build:
+      context: "${BUILDCTX:-.}"
+      labels: *default-labels
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - KILL
+      - NET_BIND_SERVICE
+      - NET_RAW
+      - SETGID
+      - SETUID
+    read_only: true
+    tmpfs:
+      - /run:size=8m,mode=0755
+      - /tmp:size=32m,mode=1777
+    environment:
+      CANARY_IP: 172.30.119.2
+      PYTHONDONTWRITEBYTECODE: "1"
+    networks:
+      canarynet:
+        ipv4_address: 172.30.119.2
+    volumes:
+      - "${SUPERDIR}./state/plugins/spr-opencanary:/state/plugins/spr-opencanary"
+      - "${SUPERDIR}./configs/plugins/spr-opencanary:/etc/opencanaryd"
+
+networks:
+  canarynet:
+    name: spr-opencanary
+    driver_opts:
+      com.docker.network.bridge.name: spr-opencanary
+    ipam:
+      config:
+        - subnet: 172.30.119.0/24
