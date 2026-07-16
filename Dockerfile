@@ -50,6 +50,7 @@ RUN --mount=type=tmpfs,target=/root/.cache \
 FROM ${UBUNTU_REF}
 ENV DEBIAN_FRONTEND=noninteractive \
     PATH="/opt/opencanary/bin:${PATH}" \
+    PYTHONPATH="/scripts" \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 ARG UBUNTU_SNAPSHOT=20260601T000000Z

@@ -13,6 +13,7 @@ into an appliance-style dashboard built with [`spr-plugin-ui`](https://github.co
   Redis, RDP, VNC, Git, HTTP proxy, SNMP, NTP, SIP, TFTP, and TCP banner
 - NAS appliance, Linux server, Windows server, and network appliance presets
 - Generic, Slack, and Microsoft Teams webhooks; the secret URL is never returned by the API
+- Webhooks send attacker events only; startup and service-registration chatter stays local
 - Ignore-list support for trusted IP addresses and CIDRs
 - Optional PFW-managed LAN destination and port mapping
 - OpenCanary process controls and SPR topology integration
@@ -79,6 +80,7 @@ bundled UI, and exposes the topology. The control plane is available only throug
 - `no-new-privileges` is enabled and the daemon runs unprivileged after binding listeners.
 - Config writes are atomic and mode `0600`; webhook URLs remain write-only through the API.
 - Detection history rotates at 20 MiB with two backups to bound persistent disk usage.
+- OpenCanary lifecycle records remain in the local rotating log but are filtered from webhooks.
 - API request bodies are size-limited and reject unknown fields.
 - The UI contains no external scripts, fonts, analytics, or CDN dependencies.
 - Attacker passwords are not returned by the plugin API or displayed in the UI.

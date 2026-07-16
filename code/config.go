@@ -319,11 +319,13 @@ func renderOpenCanaryConfig(c Config) ([]byte, error) {
 			handlers["slack"] = map[string]any{
 				"class":       "opencanary.logger.SlackHandler",
 				"webhook_url": c.Webhook.URL,
+				"filters":     []string{"attacker_events"},
 			}
 		case "teams":
 			handlers["teams"] = map[string]any{
 				"class":       "opencanary.logger.TeamsHandler",
 				"webhook_url": c.Webhook.URL,
+				"filters":     []string{"attacker_events"},
 			}
 		default:
 			handlers["webhook"] = map[string]any{
@@ -333,17 +335,26 @@ func renderOpenCanaryConfig(c Config) ([]byte, error) {
 				"data":        map[string]string{"message": "%(message)s"},
 				"headers":     map[string]string{"Content-Type": "application/json"},
 				"status_code": 200,
+				"filters":     []string{"attacker_events"},
 			}
 		}
 	}
-	rendered["logger"] = map[string]any{
-		"class": "PyLogger",
-		"kwargs": map[string]any{
-			"formatters": map[string]any{
-				"plain": map[string]string{"format": "%(message)s"},
-			},
-			"handlers": handlers,
+	loggerKwargs := map[string]any{
+		"formatters": map[string]any{
+			"plain": map[string]string{"format": "%(message)s"},
 		},
+		"handlers": handlers,
+	}
+	if c.Webhook.Enabled {
+		loggerKwargs["filters"] = map[string]any{
+			"attacker_events": map[string]string{
+				"()": "spr_opencanary_filters.WebhookAlertFilter",
+			},
+		}
+	}
+	rendered["logger"] = map[string]any{
+		"class":  "PyLogger",
+		"kwargs": loggerKwargs,
 	}
 
 	return json.MarshalIndent(rendered, "", "  ")

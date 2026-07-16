@@ -57,6 +57,22 @@ func TestRenderOpenCanaryConfigAndRedaction(t *testing.T) {
 	if _, ok := handlers["slack"]; !ok {
 		t.Fatalf("slack handler missing: %#v", handlers)
 	}
+	filters, ok := kwargs["filters"].(map[string]any)
+	if !ok {
+		t.Fatalf("webhook filters missing: %#v", kwargs)
+	}
+	attackerFilter, ok := filters["attacker_events"].(map[string]any)
+	if !ok || attackerFilter["()"] != "spr_opencanary_filters.WebhookAlertFilter" {
+		t.Fatalf("attacker-event filter not rendered: %#v", filters)
+	}
+	slackHandler := handlers["slack"].(map[string]any)
+	slackFilters, ok := slackHandler["filters"].([]any)
+	if !ok || len(slackFilters) != 1 || slackFilters[0] != "attacker_events" {
+		t.Fatalf("slack handler is not filtered: %#v", slackHandler)
+	}
+	if _, filtered := fileHandler["filters"]; filtered {
+		t.Fatalf("local event file should retain lifecycle diagnostics: %#v", fileHandler)
+	}
 	view := configView(cfg)
 	if !view.Webhook.Configured || !view.Webhook.Enabled {
 		t.Fatalf("webhook state not exposed: %+v", view.Webhook)
