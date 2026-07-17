@@ -1,6 +1,6 @@
 {
   "Name": "spr-opencanary",
-  "ComposeFilePath": "plugins/user/spr-opencanary/docker-compose.yml",
+  "ComposeFilePath": "plugins/user/spr-opencanary/docker-compose-krun.yml",
   "UnixPath": "/state/plugins/spr-opencanary/socket",
   "URI": "spr-opencanary",
   "HasUI": true,
@@ -9,7 +9,8 @@
   "SandboxedUI": false,
   "InstallTokenPath": "/configs/plugins/spr-opencanary/api-token",
   "NetworkCapabilities": {
-    "Interface": "spr-opencanary",
+    "Interface": "kopencanary0",
+    "DeviceMAC": "02:53:50:52:4b:0d",
     "Policies": ["lan", "wan", "dns"],
     "Groups": []
   },
