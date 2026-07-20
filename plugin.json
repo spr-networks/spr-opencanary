@@ -1,6 +1,6 @@
 {
   "Name": "spr-opencanary",
-  "ComposeFilePath": "plugins/user/spr-opencanary/docker-compose-krun.yml",
+  "Runtime": "kvm",
   "UnixPath": "/state/plugins/spr-opencanary/socket",
   "URI": "spr-opencanary",
   "HasUI": true,

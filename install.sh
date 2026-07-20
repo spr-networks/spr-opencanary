@@ -30,8 +30,8 @@ if ! sudo nft get element inet filter dhcp_access "{ \"${KRUN_TAP}\" . ${KRUN_MA
   sudo nft add element inet filter dhcp_access "{ \"${KRUN_TAP}\" . ${KRUN_MAC} : accept }"
 fi
 
-docker compose -f docker-compose-krun.yml build
-docker compose -f docker-compose-krun.yml up -d
+docker compose -f docker-compose-kvm.yml build
+docker compose -f docker-compose-kvm.yml up -d
 
 CANARY_IP=
 for _ in $(seq 1 30); do
