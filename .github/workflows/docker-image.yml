@@ -2,7 +2,7 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [dev]
+    branches: [dev, krun]
   workflow_run:
     workflows: ["Bump version"]
     types: [completed]
@@ -31,6 +31,9 @@ jobs:
       - name: Select development channel
         if: ${{ github.ref_name == 'dev' }}
         run: echo "RELEASE_CHANNEL=-dev" >> "$GITHUB_ENV"
+      - name: Select krun channel
+        if: ${{ github.ref_name == 'krun' }}
+        run: echo "RELEASE_CHANNEL=-krun" >> "$GITHUB_ENV"
       - name: Load reproducible pins
         run: grep -vE '^[[:space:]]*(#|$)' reproducible.env >> "$GITHUB_ENV"
       - uses: docker/setup-qemu-action@v3

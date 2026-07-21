@@ -22,12 +22,12 @@ printf '%s' "$SPR_API_TOKEN" > "$CONFIG_DIR/api-token"
 chmod 600 "$CONFIG_DIR/api-token"
 
 KRUN_MAC="02:53:50:52:4b:0d"
-KRUN_TAP="kopencanary0"
+PLUGIN_INTERFACE="spr-opencanary"
 curl --fail-with-body --silent --show-error "http://127.0.0.1/device?identity=${KRUN_MAC}" \
   -H "Authorization: Bearer ${SPR_API_TOKEN}" -H "Content-Type: application/json" \
   -X PUT --data-raw "{\"MAC\":\"${KRUN_MAC}\",\"Name\":\"spr-opencanary\",\"Policies\":[\"lan\",\"wan\",\"dns\"],\"Groups\":[]}" >/dev/null
-if ! sudo nft get element inet filter dhcp_access "{ \"${KRUN_TAP}\" . ${KRUN_MAC} }" >/dev/null 2>&1; then
-  sudo nft add element inet filter dhcp_access "{ \"${KRUN_TAP}\" . ${KRUN_MAC} : accept }"
+if ! sudo nft get element inet filter dhcp_access "{ \"${PLUGIN_INTERFACE}\" . ${KRUN_MAC} }" >/dev/null 2>&1; then
+  sudo nft add element inet filter dhcp_access "{ \"${PLUGIN_INTERFACE}\" . ${KRUN_MAC} : accept }"
 fi
 
 docker compose -f docker-compose-kvm.yml build
@@ -44,7 +44,7 @@ curl --fail-with-body "http://127.0.0.1/firewall/custom_interface" \
   -H "Authorization: Bearer ${SPR_API_TOKEN}" \
   -H 'Content-Type: application/json' \
   -X PUT \
-  --data-raw "{\"RuleName\":\"Plugin-spr-opencanary\",\"SrcIP\":\"${CANARY_IP}\",\"Interface\":\"${KRUN_TAP}\",\"Policies\":[\"lan\",\"wan\",\"dns\"],\"Groups\":[],\"Tags\":[]}"
+  --data-raw "{\"RuleName\":\"Plugin-spr-opencanary\",\"SrcIP\":\"${CANARY_IP}\",\"Interface\":\"${PLUGIN_INTERFACE}\",\"Policies\":[\"lan\",\"wan\",\"dns\"],\"Groups\":[],\"Tags\":[]}"
 
 echo
 echo "[+] OpenCanary is listening at ${CANARY_IP}."
