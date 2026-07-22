@@ -6,7 +6,7 @@
   "HasUI": true,
   "HasTopology": true,
   "Icon": "ShieldAlert",
-  "SandboxedUI": false,
+  "SandboxedUI": true,
   "NetworkCapabilities": {
     "Interface": "spr-opencanary",
     "DeviceMAC": "02:53:50:52:4b:0d",
