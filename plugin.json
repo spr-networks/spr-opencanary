@@ -7,7 +7,6 @@
   "HasTopology": true,
   "Icon": "ShieldAlert",
   "SandboxedUI": false,
-  "InstallTokenPath": "/configs/plugins/spr-opencanary/api-token",
   "NetworkCapabilities": {
     "Interface": "spr-opencanary",
     "DeviceMAC": "02:53:50:52:4b:0d",
