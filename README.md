@@ -72,7 +72,7 @@ publish Docker ports.
 A small Go control plane validates the friendly configuration, writes the upstream
 OpenCanary JSON, supervises the Python daemon, parses its bounded rotating event log, serves the
 bundled UI, and exposes the topology. The control plane is available only through
-`/state/plugins/spr-opencanary/socket`, which SPR authenticates and proxies.
+`/state/plugins/spr-opencanary/socket.sock`, which SPR authenticates and proxies.
 
 - The container root filesystem is read-only; only plugin config and state are persistent.
 - All capabilities are dropped before adding the narrow set needed to bind low ports, open
