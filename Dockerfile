@@ -2,9 +2,11 @@
 ARG ALPINE_REF=alpine@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
 ARG UBUNTU_REF=ubuntu:24.04@sha256:4fbb8e6a8395de5a7550b33509421a2bafbc0aab6c06ba2cef9ebffbc7092d90
 ARG NODE_REF=node:18@sha256:c6ae79e38498325db67193d391e6ec1d224d96c693a8a4d943498556716d3783
+ARG SPR_KRUN_PLUGIN_REF=ghcr.io/spr-networks/spr-krun-plugin:latest
 ARG SOURCE_DATE_EPOCH
 
 FROM ${ALPINE_REF} AS cacerts
+FROM ${SPR_KRUN_PLUGIN_REF} AS krun-plugin
 
 FROM ${UBUNTU_REF} AS builder
 ENV DEBIAN_FRONTEND=noninteractive
@@ -59,11 +61,14 @@ RUN set -eux; \
     printf 'Types: deb\nURIs: https://snapshot.ubuntu.com/ubuntu/%s\nSuites: noble noble-updates noble-security\nComponents: main restricted universe multiverse\nSigned-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg\n' "${UBUNTU_SNAPSHOT}" > /etc/apt/sources.list.d/ubuntu.sources; \
     printf 'APT::Install-Recommends "false";\nAcquire::Check-Valid-Until "false";\n' > /etc/apt/apt.conf.d/99reproducible; \
     apt-get update; \
-    apt-get install -y --no-install-recommends ca-certificates libpcap0.8 python3; \
+    apt-get install -y --no-install-recommends ca-certificates iproute2 libpcap0.8 python3 util-linux; \
     rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/ldconfig/aux-cache
 COPY --from=builder /opt/opencanary /opt/opencanary
 COPY --from=builder /spr_opencanary_plugin /spr_opencanary_plugin
 COPY --from=builder-ui /app/build/ /ui/
+COPY --from=krun-plugin /usr/local/bin/spr-krun-init /usr/local/bin/
+COPY --from=krun-plugin /usr/local/bin/spr-krun-vsock-proxy /usr/local/bin/
 COPY scripts/ /scripts/
 
-ENTRYPOINT ["/scripts/startup.sh"]
+ENTRYPOINT ["/usr/local/bin/spr-krun-init"]
+CMD ["/scripts/startup.sh"]

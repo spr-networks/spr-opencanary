@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-var unixPluginListener = stateDir + "/socket"
+var unixPluginListener = "/run/spr-krun-plugin/spr-opencanary.sock"
 var daemon = &DaemonManager{}
 
 func jsonResponse(w http.ResponseWriter, status int, value any) {
