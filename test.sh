@@ -5,7 +5,7 @@ cd "$(dirname "$0")"
 echo "[1/6] Validating plugin manifest"
 jq -e '
   .Name == "spr-opencanary" and
-  .ComposeFilePath == "plugins/user/spr-opencanary/docker-compose.yml" and
+  .Runtime == "kvm" and
   .HasUI == true and .HasTopology == true and
   .NetworkCapabilities.Policies == ["lan", "wan", "dns"]
 ' plugin.json >/dev/null
@@ -27,5 +27,6 @@ echo "[5/6] Building UI"
 
 echo "[6/6] Validating Compose"
 SUPERDIR=/tmp/spr-opencanary-test/ docker compose config --quiet
+SUPERDIR=/tmp/spr-opencanary-test/ docker compose -f docker-compose-kvm.yml config --quiet
 
 echo "All checks passed."
