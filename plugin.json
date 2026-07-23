@@ -1,7 +1,7 @@
 {
   "Name": "spr-opencanary",
   "Runtime": "kvm",
-  "UnixPath": "/state/plugins/spr-opencanary/socket.sock",
+  "UnixPath": "/state/plugins/spr-opencanary-krun/socket.sock",
   "URI": "spr-opencanary",
   "HasUI": true,
   "HasTopology": true,
