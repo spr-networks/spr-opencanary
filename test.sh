@@ -7,11 +7,13 @@ jq -e '
   .Name == "spr-opencanary" and
   .Runtime == "kvm" and
   .HasUI == true and .HasTopology == true and
+  .NetworkCapabilities.Interface == "spr-opencanary" and
+  .NetworkCapabilities.DeviceMAC == "02:53:50:52:4b:0d" and
   .NetworkCapabilities.Policies == ["lan", "wan", "dns"]
 ' plugin.json >/dev/null
 
 echo "[2/6] Validating shell scripts"
-bash -n install.sh build_docker_compose.sh test.sh scripts/startup.sh
+bash -n build_docker_compose.sh test.sh scripts/startup.sh
 
 echo "[3/6] Testing Go control plane"
 (cd code && go test ./... && go vet ./...)
@@ -28,5 +30,9 @@ echo "[5/6] Building UI"
 echo "[6/6] Validating Compose"
 SUPERDIR=/tmp/spr-opencanary-test/ docker compose config --quiet
 SUPERDIR=/tmp/spr-opencanary-test/ docker compose -f docker-compose-kvm.yml config --quiet
+if SUPERDIR=/tmp/spr-opencanary-test/ docker compose -f docker-compose-kvm.yml config --format json | grep -q 'krun.net_mac'; then
+  echo "KVM Compose must not assign the manager-owned device MAC" >&2
+  exit 1
+fi
 
 echo "All checks passed."

@@ -48,21 +48,13 @@ The flows apply to LAN client traffic and do not publish the canary on the WAN. 
 destination and presented ports that are not already used by real LAN services. Removing LAN
 presence deletes only the flows managed by this plugin.
 
-For a command-line install:
-
-```bash
-cd /home/spr/super/plugins
-git clone https://github.com/spr-networks/spr-opencanary
-cd spr-opencanary
-./install.sh
-```
-
 ## Architecture and security
 
 The plugin uses a dedicated Docker bridge named `spr-opencanary` with a static appliance
-address. No ports are published to the host. SPR grants `lan`, `wan`, and `dns` policies to
-the bridge: LAN reachability makes the honeypot useful, while WAN/DNS let configured webhook
-destinations receive alerts.
+address. No ports are published to the host. The plugin manifest declares the stable KVM
+device MAC and requests `lan`, `wan`, and `dns` policies from SPR's plugin manager. LAN
+reachability makes the honeypot useful, while WAN/DNS let configured webhook destinations
+receive alerts.
 
 When LAN presence is enabled, PFW performs destination and port translation from the configured
 client-facing address to the container bridge address. OpenCanary continues to run only in its
