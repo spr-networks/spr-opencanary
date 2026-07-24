@@ -6,7 +6,7 @@ x-labels:
 services:
   spr-opencanary:
     container_name: spr-opencanary
-    image: ghcr.io/spr-networks/spr-opencanary:${RELEASE_VERSION:-latest}${RELEASE_CHANNEL:-}
+    image: ghcr.io/spr-networks/spr-opencanary:latest
     build:
       context: "${BUILDCTX:-.}"
       labels: *default-labels
