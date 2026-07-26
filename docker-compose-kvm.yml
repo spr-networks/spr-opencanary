@@ -28,3 +28,4 @@ networks:
     name: spr-opencanary
     driver_opts:
       com.docker.network.bridge.name: spr-opencanary
+      com.docker.network.bridge.inhibit_ipv4: "true"
