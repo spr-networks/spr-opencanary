@@ -4,6 +4,7 @@ services:
       file: docker-compose.yml
       service: spr-opencanary
     image: ghcr.io/spr-networks/spr-opencanary:latest
+    build: !reset null
     runtime: ${SPR_KRUN_RUNTIME:-spr-krun}
     annotations:
       krun.cpus: "${SPR_KRUN_CPUS:-1}"
@@ -27,6 +28,3 @@ networks:
     name: spr-opencanary
     driver_opts:
       com.docker.network.bridge.name: spr-opencanary
-    ipam:
-      config:
-        - subnet: 172.30.119.0/24

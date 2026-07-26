@@ -9,7 +9,7 @@ jq -e '
   .HasUI == true and .HasTopology == true and
   .NetworkCapabilities.Interface == "spr-opencanary" and
   .NetworkCapabilities.DeviceMAC == "02:53:50:52:4b:0d" and
-  .NetworkCapabilities.Policies == ["lan", "wan", "dns"]
+  .NetworkCapabilities.Policies == ["wan", "dns"]
 ' plugin.json >/dev/null
 
 echo "[2/6] Validating shell scripts"

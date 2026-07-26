@@ -10,7 +10,7 @@
   "NetworkCapabilities": {
     "Interface": "spr-opencanary",
     "DeviceMAC": "02:53:50:52:4b:0d",
-    "Policies": ["lan", "wan", "dns"],
+    "Policies": ["wan", "dns"],
     "Groups": []
   },
   "Enabled": true

@@ -28,11 +28,9 @@ services:
       - /run:size=8m,mode=0755
       - /tmp:size=32m,mode=1777
     environment:
-      CANARY_IP: 172.30.119.2
       PYTHONDONTWRITEBYTECODE: "1"
     networks:
       canarynet:
-        ipv4_address: 172.30.119.2
     volumes:
       - "${SUPERDIR}./state/plugins/spr-opencanary:/state/plugins/spr-opencanary"
       - "${SUPERDIR}./configs/plugins/spr-opencanary:/etc/opencanaryd"
@@ -42,6 +40,3 @@ networks:
     name: spr-opencanary
     driver_opts:
       com.docker.network.bridge.name: spr-opencanary
-    ipam:
-      config:
-        - subnet: 172.30.119.0/24
