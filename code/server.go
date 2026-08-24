@@ -15,8 +15,15 @@ import (
 	"time"
 )
 
-var unixPluginListener = "/run/spr-krun-plugin/spr-opencanary.sock"
+var unixPluginListener = testPrefix + "/state/plugins/spr-opencanary-krun/socket.sock"
 var daemon = &DaemonManager{}
+
+func pluginSocketPath() string {
+	if path := os.Getenv("SPR_KRUN_PLUGIN_SOCKET"); path != "" {
+		return path
+	}
+	return unixPluginListener
+}
 
 func jsonResponse(w http.ResponseWriter, status int, value any) {
 	w.Header().Set("Content-Type", "application/json")
@@ -187,9 +194,7 @@ func routes() http.Handler {
 }
 
 func run() error {
-	if testPrefix != "" {
-		unixPluginListener = testPrefix + unixPluginListener
-	}
+	socketPath := pluginSocketPath()
 	if err := initConfig(); err != nil {
 		return err
 	}
@@ -198,18 +203,18 @@ func run() error {
 		// restart a failed daemon from the SPR UI.
 		fmt.Println("OpenCanary failed to start:", err)
 	}
-	if err := os.MkdirAll(filepath.Dir(unixPluginListener), 0770); err != nil {
+	if err := os.MkdirAll(filepath.Dir(socketPath), 0770); err != nil {
 		return err
 	}
-	if err := os.Remove(unixPluginListener); err != nil && !os.IsNotExist(err) {
+	if err := os.Remove(socketPath); err != nil && !os.IsNotExist(err) {
 		return err
 	}
-	listener, err := net.Listen("unix", unixPluginListener)
+	listener, err := net.Listen("unix", socketPath)
 	if err != nil {
 		return err
 	}
 	defer listener.Close()
-	if err := os.Chmod(unixPluginListener, 0770); err != nil {
+	if err := os.Chmod(socketPath, 0770); err != nil {
 		// Docker Desktop bind mounts do not support chmod on Unix sockets.
 		// SPR's Linux host does; keep serving if the backing filesystem does not.
 		fmt.Println("warning: could not chmod plugin socket:", err)

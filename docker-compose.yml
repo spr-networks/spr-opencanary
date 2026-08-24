@@ -33,6 +33,7 @@ services:
       canarynet:
     volumes:
       - "${SUPERDIR}./state/plugins/spr-opencanary:/state/plugins/spr-opencanary"
+      - "${SUPERDIR}./state/plugins/spr-opencanary-krun:/state/plugins/spr-opencanary-krun"
       - "${SUPERDIR}./configs/plugins/spr-opencanary:/etc/opencanaryd"
 
 networks:
