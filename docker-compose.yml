@@ -23,7 +23,6 @@ services:
       - NET_RAW
       - SETGID
       - SETUID
-    read_only: true
     tmpfs:
       - /run:size=8m,mode=0755
       - /tmp:size=32m,mode=1777
